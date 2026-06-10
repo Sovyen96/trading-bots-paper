@@ -1,0 +1,68 @@
+{
+ "cash": 10000.0,
+ "positions": {},
+ "trades": [],
+ "equity_curve": [
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ],
+  [
+   1781107200000,
+   10000.0
+  ]
+ ],
+ "last_prices": {
+  "BTCUSDT": 62219.33,
+  "ETHUSDT": 1641.99,
+  "SOLUSDT": 64.62,
+  "BNBUSDT": 592.45,
+  "XRPUSDT": 1.114,
+  "LINKUSDT": 7.732,
+  "ADAUSDT": 0.162,
+  "DOGEUSDT": 0.08416
+ },
+ "last_seen": {
+  "BTCUSDT": 1781107200000,
+  "ETHUSDT": 1781107200000,
+  "SOLUSDT": 1781107200000,
+  "BNBUSDT": 1781107200000,
+  "XRPUSDT": 1781107200000,
+  "LINKUSDT": 1781107200000,
+  "ADAUSDT": 1781107200000,
+  "DOGEUSDT": 1781107200000
+ },
+ "events": [],
+ "risk": {
+  "current_day": null,
+  "current_month": null,
+  "day_start_equity": null,
+  "month_peak_equity": null,
+  "halted_until_day": null,
+  "halted_until_month": null
+ }
+}

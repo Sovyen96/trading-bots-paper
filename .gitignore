@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+data/paper.db
+data/live_out.txt
+data/live_err.txt
+data/state.json
+data/backtest_result.json
