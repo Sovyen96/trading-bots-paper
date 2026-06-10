@@ -2,7 +2,22 @@
 
 Sistema de bots que se comunican entre sí mediante un bus de mensajes, operando
 con **precios reales de Binance y dinero 100% ficticio**. Sin claves API, sin
-riesgo real.
+riesgo real. Opera 8 criptos (BTC, ETH, SOL, BNB, XRP, LINK, ADA, DOGE) con un
+**filtro de régimen**: si BTC está bajo su media de 200 días, todo en cash.
+
+## Ejecución en la nube (sin depender de tu PC)
+
+El bot corre **gratis en GitHub Actions** cada hora (`tick.py` + workflow en
+`.github/workflows/tick.yml`). El estado se guarda en el propio repositorio y
+el dashboard se publica en GitHub Pages.
+
+Despliegue (solo la primera vez):
+```powershell
+gh auth login -w      # autenticarte en GitHub (abre el navegador)
+.\deploy.ps1          # crea el repo, sube todo, activa Pages y lanza el bot
+```
+Después: dashboard en `https://<tu-usuario>.github.io/trading-bots-paper/`
+y ejecuciones visibles en la pestaña Actions del repositorio.
 
 ## Arquitectura
 
