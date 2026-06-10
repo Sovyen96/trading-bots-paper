@@ -9,20 +9,20 @@ from .base import StrategyAgent
 
 class BreakoutAgent(StrategyAgent):
     name = "breakout"
-    lookback = 120
+    lookback = 60
 
     ENTRY_N, EXIT_N = 48, 24
+    WARMUP = 52
 
-    def evaluate(self, symbol):
+    def evaluate(self, symbol, candle):
+        price = candle["close"]
+        ts = candle["ts"]
+        atr = self.atr(symbol, candle)
+
+        if self.count[symbol] < self.WARMUP or atr is None:
+            return None
+
         cs = list(self.candles[symbol])
-        if len(cs) < self.ENTRY_N + 2:
-            return None
-        price = cs[-1]["close"]
-        ts = cs[-1]["ts"]
-        atr = self.atr(cs)
-        if atr is None:
-            return None
-
         highest = max(c["high"] for c in cs[-self.ENTRY_N - 1:-1])
         lowest = min(c["low"] for c in cs[-self.EXIT_N - 1:-1])
         in_pos = self.has_position(symbol)

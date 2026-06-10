@@ -5,6 +5,7 @@ Uso:  python backtest.py [días]   (por defecto 365)
 """
 import json
 import sys
+from concurrent.futures import ThreadPoolExecutor
 
 from bus import MessageBus, CANDLE
 from config import SYMBOLS, INTERVAL, INITIAL_CAPITAL
@@ -14,6 +15,7 @@ from regime import RegimeFilter
 from risk import RiskAgent
 from execution import ExecutionAgent
 from strategies import ALL_STRATEGIES
+from universe import get_universe
 
 
 def run(days=365, verbose=True):
@@ -26,14 +28,21 @@ def run(days=365, verbose=True):
     ExecutionAgent(bus, portfolio)
     strategies = [S(bus, portfolio) for S in ALL_STRATEGIES]
 
+    try:
+        symbols = get_universe()
+    except Exception as e:
+        print(f"Universo dinámico no disponible ({e}); usando lista fija")
+        symbols = SYMBOLS
     if verbose:
-        print(f"Descargando {days} días de velas {INTERVAL} de {', '.join(SYMBOLS)}...")
+        print(f"Universo: {len(symbols)} símbolos -> {', '.join(symbols)}")
+        print(f"Descargando {days} días de velas {INTERVAL} (en paralelo)...")
     all_candles = []
-    for sym in SYMBOLS:
-        candles = fetch_history(sym, INTERVAL, days)
-        if verbose:
-            print(f"  {sym}: {len(candles)} velas")
-        all_candles.extend(candles)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for sym, candles in zip(symbols, pool.map(
+                lambda s: fetch_history(s, INTERVAL, days), symbols)):
+            if verbose:
+                print(f"  {sym}: {len(candles)} velas")
+            all_candles.extend(candles)
     all_candles.sort(key=lambda c: c["ts"])  # cronológico, intercalando símbolos
 
     for c in all_candles:

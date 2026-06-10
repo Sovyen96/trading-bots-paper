@@ -1,6 +1,11 @@
 """Configuración central del sistema de trading multi-agente (PAPER TRADING)."""
 
 # --- Mercado ---
+# Universo dinámico: top N pares USDT por volumen 24h (ver universe.py).
+# Cubre BTC, ETH y todas las altcoins líquidas del momento automáticamente.
+UNIVERSE_SIZE = 50
+MIN_QUOTE_VOLUME = 10_000_000   # mínimo 10M USDT de volumen diario (liquidez real)
+# Lista de respaldo si la selección dinámica falla
 SYMBOLS = [
     "BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT",
     "XRPUSDT", "LINKUSDT", "ADAUSDT", "DOGEUSDT",
@@ -28,8 +33,8 @@ SLIPPAGE = 0.0003        # 0.03% de deslizamiento estimado por orden
 
 # --- Gestión de riesgo (límites duros) ---
 RISK_PER_TRADE = 0.005       # arriesga máx. 0.5% del equity por trade (vía stop)
-MAX_POSITION_PCT = 0.25      # ninguna posición supera el 25% del equity
-MAX_OPEN_POSITIONS = 6       # posiciones simultáneas máximas en todo el sistema
+MAX_POSITION_PCT = 0.15      # ninguna posición supera el 15% del equity
+MAX_OPEN_POSITIONS = 8       # posiciones simultáneas máximas en todo el sistema
 MAX_DAILY_LOSS_PCT = 0.02    # si el día pierde 2%, el sistema se detiene hasta mañana
 MAX_MONTHLY_DD_PCT = 0.05    # si el mes pierde 5% desde el pico, se detiene hasta el mes siguiente
 

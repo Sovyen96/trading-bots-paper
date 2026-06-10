@@ -9,22 +9,19 @@ from .base import StrategyAgent
 
 class MeanReversionAgent(StrategyAgent):
     name = "mean_reversion"
-    lookback = 260
 
     RSI_BUY, RSI_EXIT, TREND = 30, 55, 200
+    WARMUP = 220
 
-    def evaluate(self, symbol):
-        cs = list(self.candles[symbol])
-        if len(cs) < self.TREND + 2:
-            return None
-        closes = [c["close"] for c in cs]
-        price = closes[-1]
-        ts = cs[-1]["ts"]
+    def evaluate(self, symbol, candle):
+        price = candle["close"]
+        ts = candle["ts"]
 
-        rsi = self.rsi(closes)
-        trend = self.ema(closes, self.TREND)
-        atr = self.atr(cs)
-        if None in (rsi, trend, atr):
+        rsi = self.rsi(symbol, price)
+        _, trend = self.ema(symbol, self.TREND, price)
+        atr = self.atr(symbol, candle)
+
+        if self.count[symbol] < self.WARMUP or rsi is None or atr is None:
             return None
 
         in_pos = self.has_position(symbol)

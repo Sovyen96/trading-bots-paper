@@ -15,6 +15,7 @@ from portfolio import Portfolio
 from risk import RiskAgent
 from execution import ExecutionAgent
 from strategies import ALL_STRATEGIES
+from universe import get_universe
 
 
 def write_state(portfolio, risk, events):
@@ -52,10 +53,16 @@ def main():
     step = INTERVAL_MS[INTERVAL]
     last_seen = {}
 
+    try:
+        symbols = get_universe()
+    except Exception:
+        symbols = list(SYMBOLS)
+    print(f"Universo: {len(symbols)} símbolos")
+
     # precargar historial para que los indicadores arranquen calientes
     print("Precargando historial para indicadores...")
     warmup = {}
-    for sym in SYMBOLS:
+    for sym in symbols:
         candles = fetch_klines(sym, INTERVAL, limit=300)
         warmup[sym] = candles[:-1]  # la última puede no estar cerrada
         last_seen[sym] = warmup[sym][-1]["ts"]
@@ -65,12 +72,12 @@ def main():
         bus.publish(CANDLE, c)
     # el warmup no debe contar como trading real: resetear cartera
     portfolio.cash = portfolio.cash  # las posiciones del warmup se mantienen como contexto
-    print(f"Listo. Operando en papel sobre {', '.join(SYMBOLS)} (velas {INTERVAL}).")
+    print(f"Listo. Operando en papel sobre {len(symbols)} símbolos (velas {INTERVAL}).")
     print("Dashboard: python dashboard.py  ->  http://localhost:8800\n")
 
     while True:
         try:
-            for sym in SYMBOLS:
+            for sym in symbols:
                 candles = fetch_klines(sym, INTERVAL, limit=3)
                 for c in candles:
                     closed = c["ts"] + step <= int(time.time() * 1000)

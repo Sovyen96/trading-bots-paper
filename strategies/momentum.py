@@ -9,25 +9,20 @@ from .base import StrategyAgent
 
 class MomentumAgent(StrategyAgent):
     name = "momentum"
-    lookback = 260
 
     FAST, SLOW, TREND = 12, 48, 200
+    WARMUP = 220  # velas antes de operar (convergencia de la EMA200)
 
-    def evaluate(self, symbol):
-        cs = list(self.candles[symbol])
-        if len(cs) < self.TREND + 2:
-            return None
-        closes = [c["close"] for c in cs]
-        price = closes[-1]
-        ts = cs[-1]["ts"]
+    def evaluate(self, symbol, candle):
+        price = candle["close"]
+        ts = candle["ts"]
 
-        fast_now = self.ema(closes, self.FAST)
-        slow_now = self.ema(closes, self.SLOW)
-        fast_prev = self.ema(closes[:-1], self.FAST)
-        slow_prev = self.ema(closes[:-1], self.SLOW)
-        trend = self.ema(closes, self.TREND)
-        atr = self.atr(cs)
-        if None in (fast_now, slow_now, fast_prev, slow_prev, trend, atr):
+        fast_prev, fast_now = self.ema(symbol, self.FAST, price)
+        slow_prev, slow_now = self.ema(symbol, self.SLOW, price)
+        _, trend = self.ema(symbol, self.TREND, price)
+        atr = self.atr(symbol, candle)
+
+        if self.count[symbol] < self.WARMUP or None in (fast_prev, slow_prev, atr):
             return None
 
         in_pos = self.has_position(symbol)
