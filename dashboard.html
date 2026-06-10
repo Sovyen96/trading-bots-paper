@@ -2,108 +2,214 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Paper Trading — Sistema Multi-Agente</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>⚡ Paper Trading — Sistema Multi-Agente</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#e6edf3;
-          --dim:#8b949e; --green:#3fb950; --red:#f85149; --accent:#58a6ff; }
+  :root {
+    --bg0:#070b14; --bg1:#0b1120; --card:rgba(17,25,45,.72); --border:rgba(99,130,255,.14);
+    --text:#e8edf7; --dim:#7d8aa5; --green:#22c55e; --red:#ef4444; --accent:#6366f1;
+    --cyan:#22d3ee; --gold:#fbbf24;
+  }
   * { box-sizing:border-box; margin:0; }
-  body { background:var(--bg); color:var(--text); font:14px/1.5 'Segoe UI',sans-serif; padding:24px; }
-  h1 { font-size:20px; margin-bottom:4px; }
-  .sub { color:var(--dim); margin-bottom:20px; font-size:13px; }
-  .badge { display:inline-block; background:#1f6feb33; color:var(--accent); border:1px solid #1f6feb;
-           border-radius:12px; padding:1px 10px; font-size:12px; margin-left:8px; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:20px; }
-  .card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:14px; }
-  .card .label { color:var(--dim); font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
-  .card .value { font-size:24px; font-weight:600; margin-top:4px; }
-  .pos { color:var(--green); } .neg { color:var(--red); }
-  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
-  @media (max-width:900px){ .row{grid-template-columns:1fr;} }
-  h2 { font-size:14px; color:var(--dim); margin-bottom:10px; text-transform:uppercase; letter-spacing:.5px; }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; color:var(--dim); font-weight:500; padding:4px 8px; border-bottom:1px solid var(--border); }
-  td { padding:4px 8px; border-bottom:1px solid #21262d; }
-  #curve { width:100%; height:180px; }
-  .events { font-family:Consolas,monospace; font-size:12px; color:var(--dim);
-            max-height:220px; overflow-y:auto; white-space:pre-wrap; }
-  .warn { background:#f8514922; border:1px solid var(--red); border-radius:8px;
-          padding:10px 14px; margin-bottom:16px; display:none; }
+  body {
+    background:
+      radial-gradient(1100px 500px at 85% -10%, rgba(99,102,241,.20), transparent 60%),
+      radial-gradient(900px 450px at -10% 110%, rgba(34,211,238,.10), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    min-height:100vh; color:var(--text);
+    font:14px/1.55 'Inter',system-ui,sans-serif; padding:28px clamp(14px,4vw,44px);
+  }
+  header { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+  .logo { font-size:30px; filter:drop-shadow(0 0 12px rgba(99,102,241,.8)); }
+  h1 { font-size:clamp(18px,3vw,24px); font-weight:800; letter-spacing:-.5px;
+       background:linear-gradient(90deg,#fff,#a5b4fc); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .pill { font:700 11px 'JetBrains Mono',monospace; letter-spacing:1px; padding:4px 12px; border-radius:999px;
+          background:rgba(251,191,36,.12); color:var(--gold); border:1px solid rgba(251,191,36,.35); }
+  .sub { color:var(--dim); font-size:12.5px; margin:2px 0 18px; }
+  .sub b { color:#a5b4fc; font-weight:600; }
+
+  .regime { display:flex; align-items:center; gap:14px; border-radius:16px; padding:14px 20px; margin-bottom:18px;
+            border:1px solid var(--border); backdrop-filter:blur(8px); }
+  .regime .ico { font-size:30px; }
+  .regime h3 { font-size:15px; font-weight:800; letter-spacing:.3px; }
+  .regime p { color:var(--dim); font-size:12.5px; }
+  .regime.bull { background:linear-gradient(90deg, rgba(34,197,94,.16), transparent 70%); border-color:rgba(34,197,94,.35); }
+  .regime.bear { background:linear-gradient(90deg, rgba(239,68,68,.14), transparent 70%); border-color:rgba(239,68,68,.30); }
+  .regime.bull h3 { color:var(--green); } .regime.bear h3 { color:#fb7185; }
+  .pulse { width:9px; height:9px; border-radius:50%; margin-left:auto; }
+  .bull .pulse { background:var(--green); box-shadow:0 0 0 0 rgba(34,197,94,.6); animation:pulse 2s infinite; }
+  .bear .pulse { background:#fb7185; box-shadow:0 0 0 0 rgba(239,68,68,.6); animation:pulse 2s infinite; }
+  @keyframes pulse { 70% { box-shadow:0 0 0 11px rgba(0,0,0,0); } }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:12px; margin-bottom:18px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 18px;
+          backdrop-filter:blur(10px); transition:transform .18s, border-color .18s; }
+  .card:hover { transform:translateY(-2px); border-color:rgba(99,130,255,.36); }
+  .kpi .label { color:var(--dim); font-size:11px; text-transform:uppercase; letter-spacing:1.1px; display:flex; align-items:center; gap:6px; }
+  .kpi .value { font:800 26px 'JetBrains Mono',monospace; margin-top:6px; letter-spacing:-1px; }
+  .kpi .hint { color:var(--dim); font-size:11px; margin-top:3px; }
+  .pos { color:var(--green); } .neg { color:#fb7185; }
+
+  .row { display:grid; grid-template-columns:1.6fr 1fr; gap:14px; margin-bottom:14px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  @media (max-width:950px){ .row,.row2 { grid-template-columns:1fr; } }
+  h2 { font-size:12px; color:var(--dim); margin-bottom:12px; text-transform:uppercase; letter-spacing:1.2px;
+       display:flex; align-items:center; gap:8px; }
+  .chartbox { position:relative; height:230px; }
+
+  table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  th { text-align:left; color:var(--dim); font-weight:600; font-size:10.5px; text-transform:uppercase;
+       letter-spacing:.8px; padding:5px 8px; border-bottom:1px solid var(--border); }
+  td { padding:7px 8px; border-bottom:1px solid rgba(99,130,255,.07); font-family:'JetBrains Mono',monospace; font-size:12px; }
+  tr:last-child td { border-bottom:none; }
+  .tag { display:inline-block; padding:2px 9px; border-radius:999px; font:700 10.5px 'JetBrains Mono',monospace; }
+  .tag.b { background:rgba(99,102,241,.15); color:#a5b4fc; }
+  .pnlpill { padding:2px 10px; border-radius:999px; font-weight:700; }
+  .pnlpill.up { background:rgba(34,197,94,.13); color:var(--green); }
+  .pnlpill.dn { background:rgba(239,68,68,.13); color:#fb7185; }
+  .empty { color:var(--dim); font-style:italic; padding:14px 8px; font-family:'Inter'; }
+
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { font:600 11px 'JetBrains Mono',monospace; padding:4px 11px; border-radius:999px;
+          background:rgba(34,211,238,.08); color:var(--cyan); border:1px solid rgba(34,211,238,.22); }
+  .chip:nth-child(-n+3) { background:rgba(251,191,36,.10); color:var(--gold); border-color:rgba(251,191,36,.30); }
+
+  .events { font:11.5px/1.8 'JetBrains Mono',monospace; color:#9fb0cc; max-height:230px; overflow-y:auto; white-space:pre-wrap; }
+  .events::-webkit-scrollbar { width:8px; } .events::-webkit-scrollbar-thumb { background:rgba(99,130,255,.25); border-radius:4px; }
+  .warn { background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.4); border-radius:14px;
+          padding:11px 16px; margin-bottom:14px; display:none; font-weight:600; }
+  footer { color:var(--dim); font-size:11px; text-align:center; margin-top:22px; }
 </style>
 </head>
 <body>
-  <h1>Sistema Multi-Agente de Trading <span class="badge">PAPER — dinero ficticio</span></h1>
-  <div class="sub">3 bots (momentum · reversión · breakout) + gestor de riesgo + ejecución simulada · <span id="updated">—</span></div>
+  <header>
+    <span class="logo">⚡</span>
+    <h1>Sistema Multi-Agente de Trading</h1>
+    <span class="pill">PAPER · DINERO FICTICIO</span>
+  </header>
+  <div class="sub">3 bots — <b>momentum</b> · <b>reversión</b> · <b>breakout</b> — comunicándose con un gestor de riesgo · <span id="updated">cargando…</span></div>
+
+  <div class="regime" id="regimeBox" style="display:none">
+    <span class="ico" id="regimeIco"></span>
+    <div><h3 id="regimeTitle"></h3><p id="regimeDesc"></p></div>
+    <span class="pulse"></span>
+  </div>
   <div class="warn" id="halts"></div>
 
   <div class="grid">
-    <div class="card"><div class="label">Equity</div><div class="value" id="equity">—</div></div>
-    <div class="card"><div class="label">Retorno total</div><div class="value" id="ret">—</div></div>
-    <div class="card"><div class="label">Trades cerrados</div><div class="value" id="trades">—</div></div>
-    <div class="card"><div class="label">Win rate</div><div class="value" id="wr">—</div></div>
-    <div class="card"><div class="label">Drawdown máx.</div><div class="value" id="dd">—</div></div>
-  </div>
-
-  <div class="card" style="margin-bottom:20px;">
-    <h2>Curva de equity</h2>
-    <canvas id="curve"></canvas>
+    <div class="card kpi"><div class="label">💰 Equity</div><div class="value" id="equity">—</div><div class="hint">capital inicial 10.000</div></div>
+    <div class="card kpi"><div class="label">📈 Retorno total</div><div class="value" id="ret">—</div><div class="hint">objetivo: +0,5% a +1,5% / mes</div></div>
+    <div class="card kpi"><div class="label">🔄 Trades</div><div class="value" id="trades">—</div><div class="hint" id="wrhint">win rate —</div></div>
+    <div class="card kpi"><div class="label">📉 Drawdown máx.</div><div class="value" id="dd">—</div><div class="hint">parada automática al -5% mensual</div></div>
+    <div class="card kpi"><div class="label">🌐 Criptos vigiladas</div><div class="value" id="universe">—</div><div class="hint">top liquidez 24h, autoajustado</div></div>
   </div>
 
   <div class="row">
+    <div class="card"><h2>📊 Curva de equity</h2><div class="chartbox"><canvas id="curve"></canvas></div></div>
+    <div class="card"><h2>📅 Rendimiento mensual vs objetivo</h2><div class="chartbox"><canvas id="monthly"></canvas></div></div>
+  </div>
+
+  <div class="row2">
     <div class="card">
-      <h2>Rendimiento mensual (objetivo: +0.5% a +1.5%)</h2>
-      <table id="monthly"><tr><th>Mes</th><th>Retorno</th></tr></table>
+      <h2>📂 Posiciones abiertas</h2>
+      <table id="positions"></table>
     </div>
     <div class="card">
-      <h2>Posiciones abiertas</h2>
-      <table id="positions"><tr><th>Bot / Símbolo</th><th>Cantidad</th><th>Entrada</th><th>Stop</th></tr></table>
+      <h2>✅ Últimos trades cerrados</h2>
+      <table id="closed"></table>
     </div>
   </div>
 
-  <div class="row">
-    <div class="card">
-      <h2>Últimos trades cerrados</h2>
-      <table id="closed"><tr><th>Bot</th><th>Símbolo</th><th>Entrada</th><th>Salida</th><th>PnL</th></tr></table>
-    </div>
-    <div class="card">
-      <h2>Eventos (fills y rechazos de riesgo)</h2>
-      <div class="events" id="events">—</div>
-    </div>
+  <div class="row2">
+    <div class="card"><h2>🌐 Universo actual</h2><div class="chips" id="chips"><span class="empty">cargando…</span></div></div>
+    <div class="card"><h2>🖥️ Actividad de los agentes</h2><div class="events" id="events">—</div></div>
   </div>
+
+  <footer>Simulación con precios reales de Binance · comisión 0,10% + slippage incluidos · se actualiza cada hora vía GitHub Actions</footer>
 
 <script>
-function fmt(n, d=2){ return n==null ? '—' : Number(n).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}); }
-function cls(n){ return n>=0 ? 'pos' : 'neg'; }
+let curveChart, monthlyChart;
+const fmt = (n,d=2) => n==null ? '—' : Number(n).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const cls = n => n>=0 ? 'pos' : 'neg';
+
+function gradient(ctx, area, up){
+  const g = ctx.createLinearGradient(0, area.top, 0, area.bottom);
+  g.addColorStop(0, up ? 'rgba(34,197,94,.35)' : 'rgba(239,68,68,.30)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  return g;
+}
 
 function drawCurve(points){
-  const c = document.getElementById('curve');
-  const ctx = c.getContext('2d');
-  c.width = c.clientWidth; c.height = 180;
   if(!points || points.length<2) return;
-  const vals = points.map(p=>p[1]);
-  const min = Math.min(...vals), max = Math.max(...vals), pad = (max-min)||1;
-  ctx.strokeStyle = vals[vals.length-1] >= vals[0] ? '#3fb950' : '#f85149';
-  ctx.lineWidth = 2; ctx.beginPath();
-  points.forEach((p,i)=>{
-    const x = i/(points.length-1)*(c.width-10)+5;
-    const y = c.height-10-((p[1]-min)/pad)*(c.height-20);
-    i? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+  const labels = points.map(p => new Date(p[0]).toLocaleDateString('es-ES',{day:'2-digit',month:'short'}));
+  const vals = points.map(p => p[1]);
+  const up = vals[vals.length-1] >= vals[0];
+  const color = up ? '#22c55e' : '#fb7185';
+  if(curveChart) curveChart.destroy();
+  curveChart = new Chart(document.getElementById('curve'), {
+    type:'line',
+    data:{ labels, datasets:[{ data:vals, borderColor:color, borderWidth:2.2, pointRadius:0, tension:.3, fill:true,
+      backgroundColor: c => c.chart.chartArea ? gradient(c.chart.ctx, c.chart.chartArea, up) : 'transparent' }]},
+    options:{ responsive:true, maintainAspectRatio:false, interaction:{intersect:false, mode:'index'},
+      plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#0b1120', borderColor:'rgba(99,130,255,.3)', borderWidth:1,
+        callbacks:{ label: c => ' ' + fmt(c.parsed.y) + ' USDT' } } },
+      scales:{ x:{ ticks:{ color:'#7d8aa5', maxTicksLimit:7, font:{family:'JetBrains Mono',size:10} }, grid:{display:false} },
+               y:{ ticks:{ color:'#7d8aa5', font:{family:'JetBrains Mono',size:10}, callback:v=>fmt(v,0) },
+                   grid:{ color:'rgba(99,130,255,.07)' } } } }
   });
-  ctx.stroke();
+}
+
+function drawMonthly(monthly){
+  const entries = Object.entries(monthly||{});
+  if(!entries.length) return;
+  const labels = entries.map(([m]) => { const [y,mo]=m.split('-');
+    return ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][mo-1] + ' ' + y.slice(2); });
+  const vals = entries.map(([,v]) => v);
+  if(monthlyChart) monthlyChart.destroy();
+  monthlyChart = new Chart(document.getElementById('monthly'), {
+    type:'bar',
+    data:{ labels, datasets:[{ data:vals, borderRadius:6, borderSkipped:false,
+      backgroundColor: vals.map(v => v>=0 ? 'rgba(34,197,94,.75)' : 'rgba(239,68,68,.70)') }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#0b1120',
+        callbacks:{ label: c => ' ' + (c.parsed.y>=0?'+':'') + fmt(c.parsed.y) + '%' } } },
+      scales:{ x:{ ticks:{ color:'#7d8aa5', font:{family:'JetBrains Mono',size:10} }, grid:{display:false} },
+               y:{ ticks:{ color:'#7d8aa5', font:{family:'JetBrains Mono',size:10}, callback:v=>v+'%' },
+                   grid:{ color:'rgba(99,130,255,.07)' } } } }
+  });
 }
 
 async function refresh(){
   try{
-    const s = await (await fetch('state.json')).json();
+    const s = await (await fetch('state.json?_=' + Date.now())).json();
     if(s.error){ document.getElementById('updated').textContent = s.error; return; }
-    document.getElementById('updated').textContent = 'actualizado ' + s.updated;
+    document.getElementById('updated').textContent = '⏱ actualizado ' + new Date(s.updated).toLocaleString('es-ES');
+
+    const box = document.getElementById('regimeBox');
+    if(s.regime_risk_on === true){
+      box.style.display='flex'; box.className='regime bull';
+      document.getElementById('regimeIco').textContent='🐂';
+      document.getElementById('regimeTitle').textContent='RÉGIMEN ALCISTA — operando';
+      document.getElementById('regimeDesc').textContent='BTC sobre su media de 200 días: los bots pueden abrir posiciones.';
+    } else if(s.regime_risk_on === false){
+      box.style.display='flex'; box.className='regime bear';
+      document.getElementById('regimeIco').textContent='🐻';
+      document.getElementById('regimeTitle').textContent='RÉGIMEN BAJISTA — protegido en cash';
+      document.getElementById('regimeDesc').textContent='BTC bajo su media de 200 días: no se abren compras. El capital espera a salvo.';
+    }
+
     const st = s.stats;
-    document.getElementById('equity').textContent = fmt(st.equity) + ' USDT';
+    document.getElementById('equity').innerHTML = fmt(st.equity) + ' <span style="font-size:13px;color:#7d8aa5">USDT</span>';
     const r = document.getElementById('ret');
     r.textContent = (st.return_pct>=0?'+':'') + fmt(st.return_pct) + '%';
     r.className = 'value ' + cls(st.return_pct);
     document.getElementById('trades').textContent = st.closed_trades;
-    document.getElementById('wr').textContent = st.win_rate==null ? '—' : fmt(st.win_rate,1)+'%';
-    document.getElementById('dd').textContent = fmt(st.max_drawdown_pct)+'%';
+    document.getElementById('wrhint').textContent = st.win_rate==null ? 'win rate —' : 'win rate ' + fmt(st.win_rate,1) + '%';
+    document.getElementById('dd').textContent = fmt(st.max_drawdown_pct) + '%';
+    if(s.universe_size) document.getElementById('universe').textContent = s.universe_size;
 
     const halts = [];
     if(s.halts?.daily) halts.push('⛔ Parada DIARIA activa (pérdida >2% hoy): ' + s.halts.daily);
@@ -112,28 +218,33 @@ async function refresh(){
     hw.style.display = halts.length ? 'block' : 'none';
     hw.textContent = halts.join(' · ');
 
-    let mh = '<tr><th>Mes</th><th>Retorno</th></tr>';
-    for(const [m,v] of Object.entries(s.monthly||{}))
-      mh += `<tr><td>${m}</td><td class="${cls(v)}">${v>=0?'+':''}${fmt(v)}%</td></tr>`;
-    document.getElementById('monthly').innerHTML = mh;
-
-    let ph = '<tr><th>Bot / Símbolo</th><th>Cantidad</th><th>Entrada</th><th>Stop</th></tr>';
-    const pos = st.open_positions||{};
-    if(!Object.keys(pos).length) ph += '<tr><td colspan="4" style="color:#8b949e">ninguna</td></tr>';
-    for(const [k,p] of Object.entries(pos))
-      ph += `<tr><td>${k}</td><td>${fmt(p.qty,6)}</td><td>${fmt(p.entry)}</td><td>${p.stop?fmt(p.stop):'—'}</td></tr>`;
+    const pos = st.open_positions || {};
+    let ph = '<tr><th>Bot</th><th>Símbolo</th><th>Cantidad</th><th>Entrada</th><th>Stop</th></tr>';
+    if(!Object.keys(pos).length) ph += '<tr><td colspan="5" class="empty">ninguna — el sistema espera su momento</td></tr>';
+    for(const [k,p] of Object.entries(pos)){
+      const [bot,sym] = k.split('/');
+      ph += `<tr><td><span class="tag b">${bot}</span></td><td>${sym}</td><td>${fmt(p.qty,6)}</td><td>${fmt(p.entry)}</td><td>${p.stop?fmt(p.stop):'—'}</td></tr>`;
+    }
     document.getElementById('positions').innerHTML = ph;
 
     let ch = '<tr><th>Bot</th><th>Símbolo</th><th>Entrada</th><th>Salida</th><th>PnL</th></tr>';
-    for(const t of (s.recent_trades||[]).slice().reverse())
-      ch += `<tr><td>${t.strategy}</td><td>${t.symbol}</td><td>${fmt(t.entry)}</td><td>${fmt(t.exit)}</td><td class="${cls(t.pnl)}">${t.pnl>=0?'+':''}${fmt(t.pnl)}</td></tr>`;
+    const tr = (s.recent_trades||[]).slice().reverse();
+    if(!tr.length) ch += '<tr><td colspan="5" class="empty">aún sin trades cerrados</td></tr>';
+    for(const t of tr)
+      ch += `<tr><td><span class="tag b">${t.strategy}</span></td><td>${t.symbol}</td><td>${fmt(t.entry)}</td><td>${fmt(t.exit)}</td>
+             <td><span class="pnlpill ${t.pnl>=0?'up':'dn'}">${t.pnl>=0?'+':''}${fmt(t.pnl)}</span></td></tr>`;
     document.getElementById('closed').innerHTML = ch;
 
-    document.getElementById('events').textContent = (s.recent_events||[]).slice().reverse().join('\n') || 'sin eventos aún';
+    const chips = document.getElementById('chips');
+    if(s.universe && s.universe.length)
+      chips.innerHTML = s.universe.map(u => `<span class="chip">${u.replace('USDT','')}</span>`).join('');
+
+    document.getElementById('events').textContent = (s.recent_events||[]).slice().reverse().join('\n') || 'sin actividad aún — los agentes evalúan cada hora';
     drawCurve(s.equity_curve);
+    drawMonthly(s.monthly);
   }catch(e){ console.error(e); }
 }
-refresh(); setInterval(refresh, 15000);
+refresh(); setInterval(refresh, 60000);
 </script>
 </body>
 </html>
