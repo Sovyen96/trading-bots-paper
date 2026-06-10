@@ -72,10 +72,25 @@
   .pnlpill.dn { background:rgba(239,68,68,.13); color:#fb7185; }
   .empty { color:var(--dim); font-style:italic; padding:14px 8px; font-family:'Inter'; }
 
-  .chips { display:flex; flex-wrap:wrap; gap:7px; }
-  .chip { font:600 11px 'JetBrains Mono',monospace; padding:4px 11px; border-radius:999px;
-          background:rgba(34,211,238,.08); color:var(--cyan); border:1px solid rgba(34,211,238,.22); }
-  .chip:nth-child(-n+3) { background:rgba(251,191,36,.10); color:var(--gold); border-color:rgba(251,191,36,.30); }
+  .coins { display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:10px; }
+  .coin { display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:13px;
+          background:rgba(13,20,38,.65); border:1px solid rgba(99,130,255,.10);
+          transition:transform .15s, border-color .15s; }
+  .coin:hover { transform:translateY(-2px); border-color:rgba(34,211,238,.4); }
+  .coin img, .coin .fb { width:30px; height:30px; border-radius:50%; flex:none; }
+  .coin .fb { display:flex; align-items:center; justify-content:center; font:800 11px 'JetBrains Mono',monospace; color:#fff; }
+  .coin .nm { font:700 12.5px 'JetBrains Mono',monospace; }
+  .coin .pr { font:600 11.5px 'JetBrains Mono',monospace; color:var(--dim); }
+  .coin .ch { margin-left:auto; font:700 11px 'JetBrains Mono',monospace; padding:2px 8px; border-radius:999px; }
+  .coin .ch.up { background:rgba(34,197,94,.13); color:var(--green); }
+  .coin .ch.dn { background:rgba(239,68,68,.13); color:#fb7185; }
+  .demobtn { margin-left:auto; cursor:pointer; font:700 11px 'JetBrains Mono',monospace; letter-spacing:1px;
+             padding:6px 14px; border-radius:999px; border:1px solid rgba(34,211,238,.4);
+             background:rgba(34,211,238,.10); color:var(--cyan); transition:all .15s; }
+  .demobtn:hover { background:rgba(34,211,238,.22); }
+  .demobtn.on { background:rgba(251,191,36,.15); color:var(--gold); border-color:rgba(251,191,36,.5); }
+  .demobanner { display:none; background:rgba(251,191,36,.10); border:1px solid rgba(251,191,36,.4);
+                border-radius:14px; padding:10px 16px; margin-bottom:14px; color:var(--gold); font-weight:600; font-size:13px; }
 
   .events { font:11.5px/1.8 'JetBrains Mono',monospace; color:#9fb0cc; max-height:230px; overflow-y:auto; white-space:pre-wrap; }
   .events::-webkit-scrollbar { width:8px; } .events::-webkit-scrollbar-thumb { background:rgba(99,130,255,.25); border-radius:4px; }
@@ -89,9 +104,11 @@
     <span class="logo">⚡</span>
     <h1>Sistema Multi-Agente de Trading</h1>
     <span class="pill">PAPER · DINERO FICTICIO</span>
+    <button class="demobtn" id="demobtn" onclick="toggleDemo()">🎮 VER DEMO</button>
   </header>
   <div class="sub">3 bots — <b>momentum</b> · <b>reversión</b> · <b>breakout</b> — comunicándose con un gestor de riesgo · <span id="updated">cargando…</span></div>
 
+  <div class="demobanner" id="demobanner">🎮 MODO DEMO — estás viendo datos de prueba para previsualizar el dashboard en acción. Pulsa el botón de nuevo para volver a los datos reales.</div>
   <div class="regime" id="regimeBox" style="display:none">
     <span class="ico" id="regimeIco"></span>
     <div><h3 id="regimeTitle"></h3><p id="regimeDesc"></p></div>
@@ -123,9 +140,13 @@
     </div>
   </div>
 
-  <div class="row2">
-    <div class="card"><h2>🌐 Universo actual</h2><div class="chips" id="chips"><span class="empty">cargando…</span></div></div>
-    <div class="card"><h2>🖥️ Actividad de los agentes</h2><div class="events" id="events">—</div></div>
+  <div class="card" style="margin-bottom:14px;">
+    <h2>🌐 Criptos en seguimiento <span style="font-weight:400;text-transform:none;letter-spacing:0">— precio y variación 24h</span></h2>
+    <div class="coins" id="coins"><span class="empty">cargando…</span></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <h2>🖥️ Actividad de los agentes</h2><div class="events" id="events">—</div>
   </div>
 
   <footer>Simulación con precios reales de Binance · comisión 0,10% + slippage incluidos · se actualiza cada hora vía GitHub Actions</footer>
@@ -133,6 +154,7 @@
 <script>
 let curveChart, monthlyChart;
 const fmt = (n,d=2) => n==null ? '—' : Number(n).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fprice = v => v==null ? '—' : v>=100 ? fmt(v,0) : v>=1 ? fmt(v,2) : v>=0.01 ? fmt(v,4) : fmt(v,8);
 const cls = n => n>=0 ? 'pos' : 'neg';
 
 function gradient(ctx, area, up){
@@ -182,11 +204,89 @@ function drawMonthly(monthly){
   });
 }
 
+const ICONS = 'https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/32/color/';
+const hue = t => { let h=0; for(const c of t) h = (h*31 + c.charCodeAt(0)) % 360; return h; };
+
+function coinTile(d){
+  const base = d.symbol.replace('USDT','');
+  const up = d.change >= 0;
+  const price = fprice(d.price);
+  return `<div class="coin">
+    <img src="${ICONS}${base.toLowerCase()}.png" alt="" loading="lazy"
+         onerror="this.outerHTML='<span class=fb style=background:hsl(${hue(base)},55%,38%)>${base.slice(0,3)}</span>'">
+    <div><div class="nm">${base}</div><div class="pr">$${price}</div></div>
+    <span class="ch ${up?'up':'dn'}">${up?'▲':'▼'} ${fmt(Math.abs(d.change),1)}%</span>
+  </div>`;
+}
+
+function demoState(){
+  const now = Date.now(), H = 3600e3;
+  const curve = []; let eq = 10000;
+  for(let i=500; i>0; i--){
+    const wave = Math.sin(i/40)*0.0012, drift = 0.000045;
+    eq = Math.max(9300, eq * (1 + drift + wave + (Math.sin(i*7.3)+Math.cos(i*3.1))*0.0011));
+    curve.push([now - i*H, Math.round(eq*100)/100]);
+  }
+  const final = curve[curve.length-1][1];
+  const coins = [
+    ['BTCUSDT',64210,2.4],['ETHUSDT',3450,3.8],['SOLUSDT',148.2,5.2],['XRPUSDT',0.62,-1.1],
+    ['BNBUSDT',590,0.9],['DOGEUSDT',0.142,7.3],['ADAUSDT',0.46,-0.8],['PEPEUSDT',0.000011,12.5],
+    ['SUIUSDT',1.08,4.1],['TONUSDT',7.2,-2.3],['AVAXUSDT',36.4,1.7],['NEARUSDT',7.1,3.2],
+    ['LINKUSDT',16.8,2.1],['LTCUSDT',84.5,-0.4],['TRXUSDT',0.12,0.6],['XLMUSDT',0.11,-1.5],
+    ['BCHUSDT',478,1.2],['FETUSDT',2.21,8.9],['TAOUSDT',462,-3.1],['ONDOUSDT',0.89,6.4],
+    ['WLDUSDT',4.85,9.1],['ENAUSDT',0.97,5.5],['CHZUSDT',0.11,2.8],['ZECUSDT',38.2,-2.0]
+  ].map(([s,p,c]) => ({symbol:s, price:p, change:c}));
+  return {
+    updated: new Date().toISOString(), regime_risk_on: true,
+    universe_size: coins.length, universe: coins.map(c=>c.symbol), watchlist: coins,
+    halts: {},
+    stats: {
+      equity: final, cash: Math.round(final*0.62), return_pct: Math.round((final/10000-1)*10000)/100,
+      closed_trades: 47, win_rate: 38.3, total_pnl: Math.round((final-10000)*100)/100, max_drawdown_pct: 4.21,
+      open_positions: {
+        'momentum/BTCUSDT': {qty:0.0214, entry:62850.0, stop:60340.0},
+        'breakout/SOLUSDT': {qty:9.4200, entry:141.20, stop:131.70},
+        'mean_reversion/DOGEUSDT': {qty:9120.0, entry:0.1315, stop:0.1228}
+      }
+    },
+    monthly: {'2026-01':1.2,'2026-02':-0.8,'2026-03':2.9,'2026-04':1.4,'2026-05':-1.6,'2026-06':3.1},
+    recent_trades: [
+      {strategy:'breakout', symbol:'PEPEUSDT', entry:0.0000094, exit:0.0000108, pnl:212.40},
+      {strategy:'momentum', symbol:'ETHUSDT', entry:3270.0, exit:3445.0, pnl:184.10},
+      {strategy:'mean_reversion', symbol:'SUIUSDT', entry:0.98, exit:1.06, pnl:96.50},
+      {strategy:'momentum', symbol:'XRPUSDT', entry:0.645, exit:0.622, pnl:-58.30},
+      {strategy:'breakout', symbol:'WLDUSDT', entry:4.21, exit:4.78, pnl:154.90},
+      {strategy:'breakout', symbol:'TAOUSDT', entry:489.0, exit:471.0, pnl:-49.80},
+      {strategy:'momentum', symbol:'SOLUSDT', entry:128.4, exit:139.9, pnl:201.70}
+    ],
+    recent_events: [
+      '06-10 14:00 FILL BUY BTCUSDT 0.021400 @ 62850.00 [momentum] EMA12>48 cruce alcista sobre EMA200',
+      '06-10 13:00 FILL SELL PEPEUSDT 18200000 @ 0.0000108 [breakout] pérdida del mínimo de 24h',
+      '06-10 11:00 RECHAZO AVAXUSDT [breakout]: ya hay 8 posiciones abiertas',
+      '06-10 09:00 FILL BUY SOLUSDT 9.420000 @ 141.20 [breakout] ruptura del máximo de 48h',
+      '06-09 22:00 FILL BUY DOGEUSDT 9120.00 @ 0.1315 [mean_reversion] RSI=27.4 sobrevendido sobre EMA200',
+      '06-09 17:00 RECHAZO PEPEUSDT [momentum]: esta estrategia ya tiene posición en el símbolo'
+    ],
+    equity_curve: curve
+  };
+}
+
+let demo = new URLSearchParams(location.search).get('demo') === '1';
+function toggleDemo(){
+  demo = !demo;
+  document.getElementById('demobtn').classList.toggle('on', demo);
+  document.getElementById('demobtn').textContent = demo ? '🎮 SALIR DEL DEMO' : '🎮 VER DEMO';
+  document.getElementById('demobanner').style.display = demo ? 'block' : 'none';
+  refresh();
+}
+
 async function refresh(){
   try{
-    const s = await (await fetch('state.json?_=' + Date.now())).json();
+    let s;
+    if(demo){ s = demoState(); }
+    else { s = await (await fetch('state.json?_=' + Date.now())).json(); }
     if(s.error){ document.getElementById('updated').textContent = s.error; return; }
-    document.getElementById('updated').textContent = '⏱ actualizado ' + new Date(s.updated).toLocaleString('es-ES');
+    document.getElementById('updated').textContent = (demo ? '🎮 demo · ' : '⏱ actualizado ') + new Date(s.updated).toLocaleString('es-ES');
 
     const box = document.getElementById('regimeBox');
     if(s.regime_risk_on === true){
@@ -223,7 +323,7 @@ async function refresh(){
     if(!Object.keys(pos).length) ph += '<tr><td colspan="5" class="empty">ninguna — el sistema espera su momento</td></tr>';
     for(const [k,p] of Object.entries(pos)){
       const [bot,sym] = k.split('/');
-      ph += `<tr><td><span class="tag b">${bot}</span></td><td>${sym}</td><td>${fmt(p.qty,6)}</td><td>${fmt(p.entry)}</td><td>${p.stop?fmt(p.stop):'—'}</td></tr>`;
+      ph += `<tr><td><span class="tag b">${bot}</span></td><td>${sym}</td><td>${fmt(p.qty,4)}</td><td>${fprice(p.entry)}</td><td>${p.stop?fprice(p.stop):'—'}</td></tr>`;
     }
     document.getElementById('positions').innerHTML = ph;
 
@@ -231,20 +331,25 @@ async function refresh(){
     const tr = (s.recent_trades||[]).slice().reverse();
     if(!tr.length) ch += '<tr><td colspan="5" class="empty">aún sin trades cerrados</td></tr>';
     for(const t of tr)
-      ch += `<tr><td><span class="tag b">${t.strategy}</span></td><td>${t.symbol}</td><td>${fmt(t.entry)}</td><td>${fmt(t.exit)}</td>
+      ch += `<tr><td><span class="tag b">${t.strategy}</span></td><td>${t.symbol}</td><td>${fprice(t.entry)}</td><td>${fprice(t.exit)}</td>
              <td><span class="pnlpill ${t.pnl>=0?'up':'dn'}">${t.pnl>=0?'+':''}${fmt(t.pnl)}</span></td></tr>`;
     document.getElementById('closed').innerHTML = ch;
 
-    const chips = document.getElementById('chips');
-    if(s.universe && s.universe.length)
-      chips.innerHTML = s.universe.map(u => `<span class="chip">${u.replace('USDT','')}</span>`).join('');
+    const coins = document.getElementById('coins');
+    if(s.watchlist && s.watchlist.length)
+      coins.innerHTML = s.watchlist.map(coinTile).join('');
+    else if(s.universe && s.universe.length)
+      coins.innerHTML = s.universe.map(u => coinTile({symbol:u, price:0, change:0})).join('');
 
     document.getElementById('events').textContent = (s.recent_events||[]).slice().reverse().join('\n') || 'sin actividad aún — los agentes evalúan cada hora';
     drawCurve(s.equity_curve);
     drawMonthly(s.monthly);
   }catch(e){ console.error(e); }
 }
-refresh(); setInterval(refresh, 60000);
+if(demo){ document.getElementById('demobtn').classList.add('on');
+  document.getElementById('demobtn').textContent = '🎮 SALIR DEL DEMO';
+  document.getElementById('demobanner').style.display = 'block'; }
+refresh(); setInterval(() => { if(!demo) refresh(); }, 60000);
 </script>
 </body>
 </html>

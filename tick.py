@@ -20,7 +20,7 @@ from regime import RegimeFilter
 from risk import RiskAgent
 from execution import ExecutionAgent
 from strategies import ALL_STRATEGIES
-from universe import get_universe
+from universe import get_universe_data
 
 LIVE_STATE = os.path.join(DATA_DIR, "live_state.json")
 DOCS_STATE = os.path.join(BASE_DIR, "docs", "state.json")
@@ -51,7 +51,7 @@ def restore(portfolio, risk, state):
     return state["last_seen"], state.get("events", [])
 
 
-def save_state(portfolio, risk, last_seen, events, universe=None):
+def save_state(portfolio, risk, last_seen, events, universe=None, watchlist=None):
     os.makedirs(DATA_DIR, exist_ok=True)
     state = {
         "cash": portfolio.cash,
@@ -85,6 +85,7 @@ def save_state(portfolio, risk, last_seen, events, universe=None):
         "regime_risk_on": None,
         "universe_size": len(universe) if universe else None,
         "universe": universe or [],
+        "watchlist": watchlist or [],
     }
     os.makedirs(os.path.dirname(DOCS_STATE), exist_ok=True)
     with open(DOCS_STATE, "w") as f:
@@ -123,9 +124,11 @@ def main():
     # Universo dinámico: top por volumen + símbolos con posición abierta
     # (una moneda que salga del top sigue gestionándose hasta cerrar la posición)
     try:
-        symbols = get_universe()
+        watchlist = get_universe_data()
+        symbols = [d["symbol"] for d in watchlist]
     except Exception as e:
         print(f"Universo dinámico no disponible ({e}); usando lista fija")
+        watchlist = []
         symbols = list(SYMBOLS)
     held = {sym for (_, sym) in portfolio.positions}
     symbols = list(dict.fromkeys(symbols + sorted(held)))
@@ -158,7 +161,7 @@ def main():
     print(f"Equity: {portfolio.equity():,.2f} USDT | "
           f"posiciones: {len(portfolio.positions)} | trades cerrados: {len(portfolio.trades)}")
 
-    save_state(portfolio, risk, last_seen, events, universe=symbols)
+    save_state(portfolio, risk, last_seen, events, universe=symbols, watchlist=watchlist)
     # añadir el régimen al json del dashboard
     with open(DOCS_STATE) as f:
         d = json.load(f)

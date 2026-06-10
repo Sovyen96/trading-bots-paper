@@ -18,8 +18,8 @@ EXCLUDED_BASES = {
 EXCLUDED_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
 
 
-def get_universe(top_n=UNIVERSE_SIZE, min_volume=MIN_QUOTE_VOLUME):
-    """Top N símbolos USDT por volumen 24h, filtrados por liquidez mínima."""
+def get_universe_data(top_n=UNIVERSE_SIZE, min_volume=MIN_QUOTE_VOLUME):
+    """Top N pares USDT por volumen 24h, con precio y variación (para dashboard)."""
     tickers = _get("/api/v3/ticker/24hr", {})
     candidates = []
     for t in tickers:
@@ -32,6 +32,16 @@ def get_universe(top_n=UNIVERSE_SIZE, min_volume=MIN_QUOTE_VOLUME):
         vol = float(t["quoteVolume"])
         if vol < min_volume:
             continue
-        candidates.append((sym, vol))
-    candidates.sort(key=lambda x: -x[1])
-    return [sym for sym, _ in candidates[:top_n]]
+        candidates.append({
+            "symbol": sym,
+            "price": float(t["lastPrice"]),
+            "change": float(t["priceChangePercent"]),
+            "volume": round(vol),
+        })
+    candidates.sort(key=lambda x: -x["volume"])
+    return candidates[:top_n]
+
+
+def get_universe(top_n=UNIVERSE_SIZE, min_volume=MIN_QUOTE_VOLUME):
+    """Solo los símbolos del universo (compatibilidad)."""
+    return [d["symbol"] for d in get_universe_data(top_n, min_volume)]
