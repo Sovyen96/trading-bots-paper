@@ -1,5 +1,5 @@
 {
- "updated": "2026-06-10T22:14:39+00:00",
+ "updated": "2026-06-11T00:25:18+00:00",
  "stats": {
   "equity": 10000.0,
   "cash": 10000.0,
@@ -552,15 +552,315 @@
   [
    1781125200000,
    10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781128800000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
+  ],
+  [
+   1781132400000,
+   10000.0
   ]
  ],
  "regime_risk_on": false,
- "universe_size": 37,
+ "universe_size": 40,
  "universe": [
   "BTCUSDT",
   "ETHUSDT",
-  "ZECUSDT",
   "SOLUSDT",
+  "ZECUSDT",
   "XRPUSDT",
   "WLDUSDT",
   "GENIUSUSDT",
@@ -570,247 +870,268 @@
   "DOGEUSDT",
   "ADAUSDT",
   "TRXUSDT",
-  "BABYUSDT",
   "ENAUSDT",
+  "BABYUSDT",
   "SUIUSDT",
   "ALLOUSDT",
   "STRAXUSDT",
-  "TONUSDT",
   "PEPEUSDT",
+  "TONUSDT",
   "OPNUSDT",
-  "HOMEUSDT",
-  "STGUSDT",
   "AVAXUSDT",
+  "STGUSDT",
+  "HOMEUSDT",
   "TAOUSDT",
-  "SAHARAUSDT",
-  "LINKUSDT",
   "HMSTRUSDT",
+  "LINKUSDT",
+  "SAHARAUSDT",
   "KATUSDT",
-  "CHZUSDT",
   "LTCUSDT",
+  "CHZUSDT",
   "WLFIUSDT",
   "UUSDT",
   "ONDOUSDT",
   "FETUSDT",
   "BCHUSDT",
+  "ASTERUSDT",
+  "INJUSDT",
+  "AAVEUSDT",
   "UTKUSDT"
  ],
  "watchlist": [
   {
    "symbol": "BTCUSDT",
-   "price": 61227.48,
-   "change": -0.96,
-   "volume": 974435673
+   "price": 61830.47,
+   "change": 0.072,
+   "volume": 992499720
   },
   {
    "symbol": "ETHUSDT",
-   "price": 1610.37,
-   "change": -2.519,
-   "volume": 465970983
-  },
-  {
-   "symbol": "ZECUSDT",
-   "price": 405.43,
-   "change": -7.909,
-   "volume": 188323908
+   "price": 1630.24,
+   "change": -0.654,
+   "volume": 478466767
   },
   {
    "symbol": "SOLUSDT",
-   "price": 62.55,
-   "change": -3.888,
-   "volume": 183809585
+   "price": 63.6,
+   "change": -2.124,
+   "volume": 190564729
+  },
+  {
+   "symbol": "ZECUSDT",
+   "price": 412.32,
+   "change": -4.069,
+   "volume": 178306103
   },
   {
    "symbol": "XRPUSDT",
-   "price": 1.0935,
-   "change": -3.86,
-   "volume": 125679040
+   "price": 1.1015,
+   "change": -3.028,
+   "volume": 130643138
   },
   {
    "symbol": "WLDUSDT",
-   "price": 0.4333,
-   "change": -16.721,
-   "volume": 96182057
+   "price": 0.45,
+   "change": -11.799,
+   "volume": 97733692
   },
   {
    "symbol": "GENIUSUSDT",
-   "price": 0.4665,
-   "change": 4.902,
-   "volume": 90190802
+   "price": 0.4726,
+   "change": 4.212,
+   "volume": 90346566
   },
   {
    "symbol": "XLMUSDT",
-   "price": 0.1821,
-   "change": -5.891,
-   "volume": 82015439
+   "price": 0.184,
+   "change": -4.465,
+   "volume": 81829156
   },
   {
    "symbol": "NEARUSDT",
-   "price": 1.956,
-   "change": -10.807,
-   "volume": 70988765
+   "price": 1.997,
+   "change": -6.682,
+   "volume": 70938968
   },
   {
    "symbol": "BNBUSDT",
-   "price": 583.84,
-   "change": -1.909,
-   "volume": 67796047
+   "price": 588.98,
+   "change": -0.805,
+   "volume": 67713732
   },
   {
    "symbol": "DOGEUSDT",
-   "price": 0.08209,
-   "change": -3.378,
-   "volume": 45015374
+   "price": 0.08345,
+   "change": -1.754,
+   "volume": 45950435
   },
   {
    "symbol": "ADAUSDT",
-   "price": 0.1595,
-   "change": -3.8,
-   "volume": 29625158
+   "price": 0.1614,
+   "change": -2.888,
+   "volume": 30279267
   },
   {
    "symbol": "TRXUSDT",
-   "price": 0.3217,
-   "change": -0.248,
-   "volume": 28639923
-  },
-  {
-   "symbol": "BABYUSDT",
-   "price": 0.01467,
-   "change": -3.929,
-   "volume": 28102317
+   "price": 0.3211,
+   "change": -0.434,
+   "volume": 28916661
   },
   {
    "symbol": "ENAUSDT",
-   "price": 0.0704,
-   "change": -13.194,
-   "volume": 27290101
+   "price": 0.0724,
+   "change": -10.285,
+   "volume": 28551327
+  },
+  {
+   "symbol": "BABYUSDT",
+   "price": 0.0148,
+   "change": -4.021,
+   "volume": 28505376
   },
   {
    "symbol": "SUIUSDT",
-   "price": 0.7187,
-   "change": -4.224,
-   "volume": 25445195
+   "price": 0.7314,
+   "change": -2.558,
+   "volume": 27446787
   },
   {
    "symbol": "ALLOUSDT",
-   "price": 0.383,
-   "change": -6.699,
-   "volume": 24858079
+   "price": 0.3815,
+   "change": -5.217,
+   "volume": 25153923
   },
   {
    "symbol": "STRAXUSDT",
-   "price": 0.01361,
-   "change": 63.779,
-   "volume": 20536526
-  },
-  {
-   "symbol": "TONUSDT",
-   "price": 1.568,
-   "change": -8.143,
-   "volume": 19952366
+   "price": 0.01283,
+   "change": 54.952,
+   "volume": 21608990
   },
   {
    "symbol": "PEPEUSDT",
-   "price": 2.65e-06,
-   "change": -4.676,
-   "volume": 19703687
+   "price": 2.7e-06,
+   "change": -2.878,
+   "volume": 20704769
+  },
+  {
+   "symbol": "TONUSDT",
+   "price": 1.612,
+   "change": -5.176,
+   "volume": 20236753
   },
   {
    "symbol": "OPNUSDT",
-   "price": 0.098,
-   "change": 5.946,
-   "volume": 19354103
-  },
-  {
-   "symbol": "HOMEUSDT",
-   "price": 0.03317,
-   "change": -6.721,
-   "volume": 19167082
-  },
-  {
-   "symbol": "STGUSDT",
-   "price": 0.4034,
-   "change": 23.704,
-   "volume": 18740346
+   "price": 0.1029,
+   "change": 9.819,
+   "volume": 19610627
   },
   {
    "symbol": "AVAXUSDT",
-   "price": 6.334,
-   "change": -4.537,
-   "volume": 18204473
+   "price": 6.424,
+   "change": -3.616,
+   "volume": 18979591
+  },
+  {
+   "symbol": "STGUSDT",
+   "price": 0.4363,
+   "change": 25.302,
+   "volume": 18950331
+  },
+  {
+   "symbol": "HOMEUSDT",
+   "price": 0.03477,
+   "change": 7.216,
+   "volume": 18578064
   },
   {
    "symbol": "TAOUSDT",
-   "price": 198.5,
-   "change": -4.705,
-   "volume": 17241399
-  },
-  {
-   "symbol": "SAHARAUSDT",
-   "price": 0.01614,
-   "change": -15.008,
-   "volume": 16681780
-  },
-  {
-   "symbol": "LINKUSDT",
-   "price": 7.517,
-   "change": -4.388,
-   "volume": 15665716
+   "price": 203.2,
+   "change": -1.693,
+   "volume": 17238820
   },
   {
    "symbol": "HMSTRUSDT",
-   "price": 0.000244,
-   "change": 40.23,
-   "volume": 15550255
+   "price": 0.0002599,
+   "change": 48.855,
+   "volume": 16905787
+  },
+  {
+   "symbol": "LINKUSDT",
+   "price": 7.612,
+   "change": -3.044,
+   "volume": 16516267
+  },
+  {
+   "symbol": "SAHARAUSDT",
+   "price": 0.01619,
+   "change": -12.249,
+   "volume": 15458564
   },
   {
    "symbol": "KATUSDT",
-   "price": 0.00661,
-   "change": 11.279,
-   "volume": 15264188
-  },
-  {
-   "symbol": "CHZUSDT",
-   "price": 0.02602,
-   "change": -8.638,
-   "volume": 14072790
+   "price": 0.00685,
+   "change": 13.787,
+   "volume": 14208892
   },
   {
    "symbol": "LTCUSDT",
-   "price": 41.43,
-   "change": -4.075,
-   "volume": 13841519
+   "price": 41.92,
+   "change": -2.963,
+   "volume": 14180835
+  },
+  {
+   "symbol": "CHZUSDT",
+   "price": 0.02678,
+   "change": -8.036,
+   "volume": 13433961
   },
   {
    "symbol": "WLFIUSDT",
-   "price": 0.0591,
-   "change": 8.044,
-   "volume": 12929253
+   "price": 0.0595,
+   "change": 8.577,
+   "volume": 13299614
   },
   {
    "symbol": "UUSDT",
-   "price": 1.0007,
-   "change": 0.01,
-   "volume": 12826280
+   "price": 1.0008,
+   "change": 0.03,
+   "volume": 13196276
   },
   {
    "symbol": "ONDOUSDT",
-   "price": 0.3289,
-   "change": -8.205,
-   "volume": 12580362
+   "price": 0.3356,
+   "change": -6.309,
+   "volume": 12926412
   },
   {
    "symbol": "FETUSDT",
-   "price": 0.1841,
-   "change": -8.317,
-   "volume": 11923674
+   "price": 0.1848,
+   "change": -7.461,
+   "volume": 12452828
   },
   {
    "symbol": "BCHUSDT",
-   "price": 193.1,
-   "change": -5.017,
-   "volume": 11291533
+   "price": 195.5,
+   "change": -4.026,
+   "volume": 11526233
+  },
+  {
+   "symbol": "ASTERUSDT",
+   "price": 0.621,
+   "change": -0.321,
+   "volume": 10884325
+  },
+  {
+   "symbol": "INJUSDT",
+   "price": 4.979,
+   "change": -9.784,
+   "volume": 10382651
+  },
+  {
+   "symbol": "AAVEUSDT",
+   "price": 61.74,
+   "change": -0.803,
+   "volume": 10284619
   },
   {
    "symbol": "UTKUSDT",
